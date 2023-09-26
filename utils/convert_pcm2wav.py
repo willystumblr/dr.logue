@@ -1,18 +1,27 @@
 import os
-import wave
-from tqdm import tqdm
 from pydub import AudioSegment
 
+folder_path = './preliminary/data/'
+output_path = './preliminary/data/wav'
 
-pcm_folder = "./preliminary/data/task1"
+def convert_pcm_to_wav(input_file, output_folder):
+    file_name = os.path.splitext(os.path.basename(input_file))[0]
+    output_file = os.path.join(output_folder, f"{file_name}.wav")
 
-for filename in tqdm(os.listdir(pcm_folder)):
-    if filename.endswith(".pcm"):
-        pcm_file_path = os.path.join(pcm_folder, filename)
-        wav_file_path = os.path.join(pcm_folder, os.path.splitext(filename)[0] + ".wav")
-        
-        pcm_audio = AudioSegment.from_file(pcm_file_path, format="raw", frame_rate=44100, channels=2, sample_width=2)
-        
-        pcm_audio.export(wav_file_path, format="wav")
-        
-        # os.remove(pcm_file_path)
+    sample_width = 2  # 16 비트
+    frame_rate = 16000  # 16 kHz
+    channels = 1  # Mono
+
+    audio = AudioSegment.from_file(input_file, format="raw",
+                                   sample_width=sample_width,
+                                   frame_rate=frame_rate,
+                                   channels=channels)
+
+    audio.export(output_file, format="wav")
+
+for root, dirs, files in os.walk(folder_path):
+    for file in files:
+        file_path = os.path.join(root, file)
+
+        if file.endswith(".pcm"):
+            convert_pcm_to_wav(file_path, output_path)
