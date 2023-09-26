@@ -8,6 +8,7 @@ import json
 import pydub
 from pydub.exceptions import CouldntDecodeError
 import tqdm 
+import os
 
 def arg_parse():
     parser = argparse.ArgumentParser(description='Korean SR Contest 2023')
@@ -33,19 +34,19 @@ def detect_wav_error(file_list, out_file):
             try:
                 audio = pydub.AudioSegment.from_wav(file)
                 if not len(audio): #header-only
-                    error_files.append(file.split("/")[-1])
+                    error_files.append(file.replace("../", "").replace("./", ""))
                 
                 if audio.max_dBFS >= 0: #clipping error
-                    error_files.append(file.split("/")[-1])
+                    error_files.append(file.replace("../", "").replace("./", ""))
                 
             except CouldntDecodeError: #data-only
-                error_files.append(file.split("/")[-1])
+                error_files.append(file.replace("../", "").replace("./", ""))
         
             except Exception as e:
-                error_files.append(file.split("/")[-1])
+                error_files.append(file.replace("../", "").replace("./", ""))
     
-    with open(out_file, 'w') as jsonf:
-        json.dump({"error_list": error_files}, jsonf, indent=4)
+    with open(out_file, 'w', encoding='utf-8') as jsonf:
+        json.dump({"error_list": error_files}, jsonf, indent=4, ensure_ascii=False)
 
 
 def main():

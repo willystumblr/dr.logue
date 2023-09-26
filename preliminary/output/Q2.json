@@ -1,7 +1,7 @@
 {
     "error_list": [
-        "task2_01.wav",
-        "task2_02.wav",
-        "task2_03.wav"
+        "data/문제2/task2_01.wav",
+        "data/문제2/task2_02.wav",
+        "data/문제2/task2_03.wav"
     ]
 }
