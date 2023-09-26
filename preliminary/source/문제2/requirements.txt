@@ -1,2 +1,3 @@
-pandas
-glob
+pydub
+json
+tqdm
