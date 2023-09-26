@@ -1,2 +1,3 @@
-pandas
-glob
+numpy
+librosa
+pydub
