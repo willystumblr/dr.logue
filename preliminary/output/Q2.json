@@ -1,9 +1,7 @@
 {
-    "error_list":[
-        "data/speech_002.wav",
-        "data/speech_005.wav",
-        "data/speech_037.wav",
-        "data/speech_106.wav",
-        "data/speech_236.wav"
+    "error_list": [
+        "task2_01.wav",
+        "task2_02.wav",
+        "task2_03.wav"
     ]
 }
