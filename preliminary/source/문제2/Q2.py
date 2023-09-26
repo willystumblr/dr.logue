@@ -20,8 +20,8 @@ def arg_parse():
 
 
 '''
-    - file_list : audio file list (pcmlist.txt)
-    - out_file : output file (Q3.json)
+    - file_list : audio file list (wavlist.txt)
+    - out_file : output file (Q2.json)
 '''
 def detect_wav_error(file_list, out_file):
     #
@@ -30,19 +30,19 @@ def detect_wav_error(file_list, out_file):
     with open(file_list, 'r') as f:
         for line in tqdm.tqdm(f):
             file = line.strip()
-        try:
-            audio = pydub.AudioSegment.from_wav(file)
-            if not len(audio):
-                error_files.append(file.replace('./', ''))
+            try:
+                audio = pydub.AudioSegment.from_wav(file)
+                if not len(audio): #header-only
+                    error_files.append(file.split("/")[-1])
                 
-            if audio.max_dBFS >= 0:
-                error_files.append(file.replace('./', ''))
+                if audio.max_dBFS >= 0: #clipping error
+                    error_files.append(file.split("/")[-1])
                 
-        except CouldntDecodeError:
-            error_files.append(file.replace('./', ''))
+            except CouldntDecodeError: #data-only
+                error_files.append(file.split("/")[-1])
         
-        except Exception as e:
-            error_files.append(file.replace('./', ''))
+            except Exception as e:
+                error_files.append(file.split("/")[-1])
     
     with open(out_file, 'w') as jsonf:
         json.dump({"error_list": error_files}, jsonf, indent=4)
