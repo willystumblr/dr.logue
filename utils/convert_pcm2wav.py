@@ -4,6 +4,9 @@ from pydub import AudioSegment
 folder_path = './preliminary/data/'
 output_path = './preliminary/data/wav'
 
+if not os.path.exists(output_path):
+    os.makedirs(output_path)
+
 def convert_pcm_to_wav(input_file, output_folder):
     file_name = os.path.splitext(os.path.basename(input_file))[0]
     output_file = os.path.join(output_folder, f"{file_name}.wav")
