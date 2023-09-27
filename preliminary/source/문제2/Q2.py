@@ -1,25 +1,17 @@
-'''
-    한국어AI 경진대회 2023 제출 코드 입출력 예시
-'''
-
 import argparse
-#import wave
 import json
 import pydub
 from pydub.exceptions import CouldntDecodeError
-import tqdm 
-import os
+import tqdm
 
 def arg_parse():
     parser = argparse.ArgumentParser(description='Korean SR Contest 2023')
     parser.add_argument(
         'audiolist', 
         type=str, 
-        required=True, 
         help="Path to .txt file where target files are listed")
     parser.add_argument(
         'outfile', type=str, 
-        required=True, 
         help="Path to .json file where the output is to be written")
 
     args = parser.parse_args()
@@ -31,9 +23,8 @@ def arg_parse():
     - file_list : audio file list (wavlist.txt)
     - out_file : output file (Q2.json)
 '''
+
 def detect_wav_error(file_list, out_file):
-    
-    # YOUR CODE HRER
     error_files = list()
     with open(file_list, 'r') as f:
         for line in tqdm.tqdm(f):
@@ -41,7 +32,7 @@ def detect_wav_error(file_list, out_file):
             try:
                 audio = pydub.AudioSegment.from_wav(file)
                 if not len(audio): #header-only
-                    error_files.append(file.replace("../", "").replace("./", "")) #refining file path
+                    error_files.append(file.replace("../", "").replace("./", ""))
                 
                 if audio.max_dBFS >= 0: #clipping error
                     error_files.append(file.replace("../", "").replace("./", ""))
@@ -49,7 +40,7 @@ def detect_wav_error(file_list, out_file):
             except CouldntDecodeError: #data-only
                 error_files.append(file.replace("../", "").replace("./", ""))
         
-            except Exception as e: # includes data-not-exist error and any other exception
+            except Exception as e: # any other exception
                 error_files.append(file.replace("../", "").replace("./", ""))
     
     with open(out_file, 'w', encoding='utf-8') as jsonf:
