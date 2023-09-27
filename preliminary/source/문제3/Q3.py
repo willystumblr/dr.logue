@@ -1,18 +1,20 @@
-'''
-    한국어AI 경진대회 2023 제출 코드 입출력 예시
-'''
-
 import argparse
 import os
 import librosa
 import numpy as np
 import json
 from pydub import AudioSegment
+import tqdm
 
 def arg_parse():
     parser = argparse.ArgumentParser(description='Korean SR Contest 2023')
-    parser.add_argument('--audiolist', type=str)
-    parser.add_argument('--outfile', type=str)
+    parser.add_argument(
+        'audiolist', 
+        type=str, 
+        help="Path to .txt file where target files are listed")
+    parser.add_argument(
+        'outfile', type=str, 
+        help="Path to .json file where the output is to be written")
 
     args = parser.parse_args()
 
@@ -42,24 +44,24 @@ def detect_silence(audio_path, threshold=0.1, min_silence_duration=4):
     y, sr = librosa.load(audio_path)
     energy = librosa.feature.rms(y=y)[0]
     normalized_energy = (energy - np.min(energy)) / (np.max(energy) - np.min(energy))
+    
     silence_segments = []
-    is_silence = False
     silence_start = None
+    
     for i, e in enumerate(normalized_energy):
-        if e < threshold and is_silence == False:
+        if e < threshold and silence_start is None:
             silence_start = i
-            is_silence = True
-            
-        elif e >= threshold and is_silence == True:
+
+        elif e >= threshold and silence_start is not None:
             silence_end = i
             ss_sec = silence_start  * (len(y) / len(energy)) / sr
             se_sec = silence_end * (len(y) / len(energy)) / sr
             silence_duration = se_sec - ss_sec
             if silence_duration >= min_silence_duration:
                 silence_segments.append({"beg":ss_sec, "end":se_sec})
-            is_silence = False
-    return silence_segments
+            silence_start = None
 
+    return silence_segments
 
 def main():
     args = arg_parse()
@@ -74,17 +76,17 @@ def main():
         for line in file:
             file_paths.append(line.strip())
 
-    for path in file_paths:
+    for path in tqdm.tqdm(file_paths):
         convert_pcm_to_wav(path)
-        # Q2
+        # Q3
         filename = os.path.basename(path)
         wav_path = path.replace('pcm', 'wav') 
         boundaries = detect_silence(wav_path)
         results[filename] = boundaries
 
-    with open(output_path, 'w') as json_file:
+    with open(output_path, 'w', encoding='utf-8') as jsonf:
         results = dict(sorted(results.items()))
-        json.dump(results, json_file, indent=4)
+        json.dump(results, jsonf, indent=4)
 
 if __name__ == "__main__":
     main()
