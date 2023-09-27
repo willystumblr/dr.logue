@@ -1,9 +1,12 @@
 # 문제2. 에러 음성파일 찾기
 
 1. environment
-	Create conda environment by entering the following commands:
-	$ conda create -n env python=3.9
-	$ pip install -r requirements.txt
+	1) Create conda env with environment.yaml
+		$ conda env create -f environment.yaml
+		$ conda activate q2_env
+
+	2) Just using requirements.txt
+		$ pip install -r requirements.txt
 
 2. how to start
 	In the directory where Q2.py exists, enter the following command:
