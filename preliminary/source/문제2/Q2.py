@@ -12,8 +12,15 @@ import os
 
 def arg_parse():
     parser = argparse.ArgumentParser(description='Korean SR Contest 2023')
-    parser.add_argument('audiolist', type=str)
-    parser.add_argument('outfile', type=str)
+    parser.add_argument(
+        'audiolist', 
+        type=str, 
+        required=True, 
+        help="Path to .txt file where target files are listed")
+    parser.add_argument(
+        'outfile', type=str, 
+        required=True, 
+        help="Path to .json file where the output is to be written")
 
     args = parser.parse_args()
 
@@ -25,7 +32,7 @@ def arg_parse():
     - out_file : output file (Q2.json)
 '''
 def detect_wav_error(file_list, out_file):
-    #
+    
     # YOUR CODE HRER
     error_files = list()
     with open(file_list, 'r') as f:
@@ -34,7 +41,7 @@ def detect_wav_error(file_list, out_file):
             try:
                 audio = pydub.AudioSegment.from_wav(file)
                 if not len(audio): #header-only
-                    error_files.append(file.replace("../", "").replace("./", ""))
+                    error_files.append(file.replace("../", "").replace("./", "")) #refining file path
                 
                 if audio.max_dBFS >= 0: #clipping error
                     error_files.append(file.replace("../", "").replace("./", ""))
@@ -42,7 +49,7 @@ def detect_wav_error(file_list, out_file):
             except CouldntDecodeError: #data-only
                 error_files.append(file.replace("../", "").replace("./", ""))
         
-            except Exception as e:
+            except Exception as e: # includes data-not-exist error and any other exception
                 error_files.append(file.replace("../", "").replace("./", ""))
     
     with open(out_file, 'w', encoding='utf-8') as jsonf:
