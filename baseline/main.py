@@ -224,6 +224,8 @@ if __name__ == '__main__':
 
             print('[INFO] Epoch %d (Validation) Loss %0.4f  CER %0.4f' % (epoch, valid_loss, valid_cer))
 
+            lr_scheduler.step()
+            
             if valid_loss < best_valid_loss:
                 best_valid_loss = valid_loss
                 epochs_no_improve = 0
@@ -234,6 +236,8 @@ if __name__ == '__main__':
             if epochs_no_improve == patience:
                 print('[INFO] Early stopping triggered after {} epochs with no improvement in validation loss.'.format(patience))
                 break
+            
+            print(f"[INFO] Current Learning Rate: {optimizer.param_groups[0]['lr']}")
             
             nova.report(
                 summary=True,
