@@ -86,7 +86,7 @@ if __name__ == '__main__':
     # Parameters 
     args.add_argument('--use_cuda', type=bool, default=True)
     args.add_argument('--seed', type=int, default=777)
-    args.add_argument('--num_epochs', type=int, default=5)
+    args.add_argument('--num_epochs', type=int, default=100)
     args.add_argument('--batch_size', type=int, default=128)
     args.add_argument('--save_result_every', type=int, default=10)
     args.add_argument('--checkpoint_every', type=int, default=1)
@@ -171,6 +171,10 @@ if __name__ == '__main__':
 
         train_begin_time = time.time()
 
+        patience = 5
+        best_valid_loss = float('inf')
+        epochs_no_improve = 0
+        
         for epoch in range(num_epochs):
             print('[INFO] Epoch %d start' % epoch)
 
@@ -222,6 +226,16 @@ if __name__ == '__main__':
 
             print('[INFO] Epoch %d (Validation) Loss %0.4f  CER %0.4f' % (epoch, valid_loss, valid_cer))
 
+            if valid_loss < best_valid_loss:
+                best_valid_loss = valid_loss
+                epochs_no_improve = 0
+            else:
+                epochs_no_improve += 1
+
+            if epochs_no_improve == patience:
+                print('[INFO] Early stopping triggered after {} epochs with no improvement in validation loss.'.format(patience))
+                break
+            
             nova.report(
                 summary=True,
                 epoch=epoch,
