@@ -229,7 +229,8 @@ if __name__ == '__main__':
                 epochs_no_improve = 0
             else:
                 epochs_no_improve += 1
-
+                print(f"Best valid loss is not updated.\n{valid_loss} > {best_valid_loss}")
+                print(f"Patience Epochs: {epochs_no_improve}")
             if epochs_no_improve == patience:
                 print('[INFO] Early stopping triggered after {} epochs with no improvement in validation loss.'.format(patience))
                 break

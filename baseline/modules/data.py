@@ -63,14 +63,10 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
     def __getitem__(self, idx):
         """ get feature vector & transcript """
         feature = self.parse_audio(os.path.join(self.dataset_path, self.audio_paths[idx]), self.augment_methods[idx]) ## 뭐지 이게??
-        
-        print('###################')
-        print(self.augment_methods[idx])
-        print(type(self.augment_methods[idx]))
-        quit()
         if feature is None:
             print('####### feature is None #######')
-            quit()
+            print(self.audio_paths[idx])
+            print(self.augment_methods[idx])
             return None 
 
         transcript, status = self.parse_transcript(self.transcripts[idx])
@@ -120,7 +116,7 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
         return len(self.audio_paths)
 
 
-def parse_audio(audio_path: str, augment_methdos, del_silence: bool = False, audio_extension: str = 'pcm') -> Tensor:
+def parse_audio(audio_path: str, del_silence: bool = False, audio_extension: str = 'pcm') -> Tensor:
     signal = load_audio(audio_path, del_silence, extension=audio_extension)
     feature = torchaudio.compliance.kaldi.fbank(
         waveform=Tensor(signal).unsqueeze(0),
@@ -129,8 +125,10 @@ def parse_audio(audio_path: str, augment_methdos, del_silence: bool = False, aud
         frame_shift=10,
         window_type='hamming'
     ).transpose(0, 1).numpy()
-
+    if feature == None:
+        print("#1 feature is None")
     feature -= feature.mean()
+    print('feature_mean:', feature.mean())
     feature /= np.std(feature)
 
     return torch.FloatTensor(feature).transpose(0, 1)
