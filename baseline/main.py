@@ -162,8 +162,7 @@ if __name__ == '__main__':
         train_dataset, valid_dataset = split_dataset(config, os.path.join(os.getcwd(), 'transcripts.txt'), vocab)
 
         lr_scheduler = get_lr_scheduler(config, optimizer, len(train_dataset)) 
-        # optimizer = Optimizer(optimizer, lr_scheduler, int(len(train_dataset)*config.num_epochs), config.max_grad_norm)
-        # optimizer already initialized
+        optimizer = Optimizer(optimizer, lr_scheduler, int(len(train_dataset)*config.num_epochs), config.max_grad_norm)
         criterion = get_criterion(config, vocab)
 
         num_epochs = config.num_epochs
