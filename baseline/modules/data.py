@@ -62,10 +62,16 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
 
     def __getitem__(self, idx):
         """ get feature vector & transcript """
-        feature = self.parse_audio(os.path.join(self.dataset_path, self.audio_paths[idx]), self.augment_methods[idx])
-
+        feature = self.parse_audio(os.path.join(self.dataset_path, self.audio_paths[idx]), self.augment_methods[idx]) ## 뭐지 이게??
+        
+        print('###################')
+        print(self.augment_methods[idx])
+        print(type(self.augment_methods[idx]))
+        quit()
         if feature is None:
-            return None
+            print('####### feature is None #######')
+            quit()
+            return None 
 
         transcript, status = self.parse_transcript(self.transcripts[idx])
 
@@ -114,7 +120,7 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
         return len(self.audio_paths)
 
 
-def parse_audio(audio_path: str, del_silence: bool = False, audio_extension: str = 'pcm') -> Tensor:
+def parse_audio(audio_path: str, augment_methdos, del_silence: bool = False, audio_extension: str = 'pcm') -> Tensor:
     signal = load_audio(audio_path, del_silence, extension=audio_extension)
     feature = torchaudio.compliance.kaldi.fbank(
         waveform=Tensor(signal).unsqueeze(0),
@@ -205,7 +211,7 @@ def split_dataset(config, transcripts_path: str, vocab: Vocabulary, valid_size=.
         valid_transcripts,
         vocab.sos_id, vocab.eos_id,
         config=config,
-        spec_augment=config.spec_augment,
+        spec_augment=False, ## Why they apply augmentaion to validation set?
         dataset_path=config.dataset_path,
         audio_extension=config.audio_extension,
     )

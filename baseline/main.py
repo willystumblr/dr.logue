@@ -82,7 +82,6 @@ if __name__ == '__main__':
     args.add_argument('--iteration', type=str, default='0')
     args.add_argument('--pause', type=int, default=0)
 
-
     # Parameters 
     args.add_argument('--use_cuda', type=bool, default=True)
     args.add_argument('--seed', type=int, default=777)
@@ -179,7 +178,6 @@ if __name__ == '__main__':
             print('[INFO] Epoch %d start' % epoch)
 
             # train
-
             train_loader = DataLoader(
                 train_dataset,
                 batch_size=config.batch_size,
