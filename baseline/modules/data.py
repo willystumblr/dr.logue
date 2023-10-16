@@ -64,9 +64,9 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
         """ get feature vector & transcript """
         feature = self.parse_audio(os.path.join(self.dataset_path, self.audio_paths[idx]), self.augment_methods[idx]) ## 뭐지 이게??
         if feature is None:
-            print('####### feature is None #######')
-            print(self.audio_paths[idx])
-            print(self.augment_methods[idx])
+            # print('####### feature is None #######')
+            # print(self.audio_paths[idx])
+            # print(self.augment_methods[idx])
             return None 
 
         transcript, status = self.parse_transcript(self.transcripts[idx])
