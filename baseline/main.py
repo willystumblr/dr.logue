@@ -236,7 +236,7 @@ if __name__ == '__main__':
                 torch.cuda.empty_cache()
                 break
             
-            print(f"[INFO] Current Learning Rate: {optimizer.param_groups[0]['lr']}")
+            #print(f"[INFO] Current Learning Rate: {optimizer.param_groups[0]['lr']}")
             
             nova.report(
                 summary=True,
