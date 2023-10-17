@@ -16,7 +16,7 @@ import warnings
 import numpy as np
 import librosa
 import pydub
-import noisereduce as nr
+# import noisereduce as nr
 
 from astropy.modeling import ParameterError
 from numpy.lib.stride_tricks import as_strided
@@ -45,7 +45,7 @@ def load_audio(audio_path: str, del_silence: bool = False, extension: str = 'pcm
             aud = aud.set_frame_rate(16000)
             signal = np.array(aud.get_array_of_samples()).astype('float32')
 
-            signal = nr.reduce_noise(y=signal, sr=16000)
+            #signal = nr.reduce_noise(y=signal, sr=16000)
 
             if del_silence:
                 non_silence_indices = split(signal, top_db=30)
@@ -277,8 +277,8 @@ def split(y, top_db=60, ref=np.max, frame_length=2048, hop_length=512):
                                             top_db=top_db)
 
     if not np.any(non_silent):
-        print([(0, len(y))])
-        # return [(0, len(y))]
+        #print([(0, len(y))])
+        return [(0, len(y))]
     
     # Interval slicing, adapted from
     # https://stackoverflow.com/questions/2619413/efficiently-finding-the-interval-with-non-zeros-in-scipy-numpy-in-python
@@ -304,6 +304,6 @@ def split(y, top_db=60, ref=np.max, frame_length=2048, hop_length=512):
     edges = np.minimum(edges, y.shape[-1])
 
     # Stack the results back as an ndarray
-    print(edges.reshape((-1, 2)))
-    quit()
+    #print(edges.reshape((-1, 2)))
+    #quit()
     return edges.reshape((-1, 2))
