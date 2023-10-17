@@ -130,6 +130,7 @@ if __name__ == '__main__':
     args.add_argument('--freq_mask_para', type=int, default=18)
     args.add_argument('--time_mask_num', type=int, default=4)
     args.add_argument('--freq_mask_num', type=int, default=2)
+    args.add_argument('--patience', type=int, default=2)
     args.add_argument('--normalize', type=bool, default=True)
     args.add_argument('--del_silence', type=bool, default=True)
     args.add_argument('--spec_augment', type=bool, default=True)
@@ -170,7 +171,7 @@ if __name__ == '__main__':
 
         train_begin_time = time.time()
 
-        patience = 2
+        # patience = 2 # get from config
         best_valid_loss = float('inf')
         epochs_no_improve = 0
         
@@ -231,8 +232,8 @@ if __name__ == '__main__':
                 epochs_no_improve += 1
                 print(f"Best valid loss is not updated.\n{valid_loss} > {best_valid_loss}")
                 print(f"Patience Epochs: {epochs_no_improve}")
-            if epochs_no_improve == patience:
-                print('[INFO] Early stopping triggered after {} epochs with no improvement in validation loss.'.format(patience))
+            if epochs_no_improve == config.patience:
+                print('[INFO] Early stopping triggered after {} epochs with no improvement in validation loss.'.format(config.patience))
                 torch.cuda.empty_cache()
                 break
             
