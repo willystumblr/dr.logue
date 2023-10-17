@@ -101,8 +101,9 @@ class LossAwareLRScheduler(LearningRateScheduler):
     Starts with init_lr, increases linearly to peak_lr over warmup_steps, and 
     then adjusts the learning rate based on loss changes.
     """
-    def __init__(self, optimizer, init_lr, peak_lr, warmup_steps, reduction_factor=0.9, patience=1):
+    def __init__(self, optimizer, init_lr, peak_lr, warmup_steps, reduction_factor=0.9, patience=2):
         super(LossAwareLRScheduler, self).__init__(optimizer, init_lr)
+        self.init_lr = init_lr
         self.peak_lr = peak_lr
         self.warmup_steps = warmup_steps
         self.current_step = 0
@@ -110,7 +111,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
         self.patience = patience
         self.patience_counter = 0
         self.prev_loss = float('inf')
-    
+        self.min_lr = (self.init_lr)**2 / self.peak_lr
     def step(self, current_loss):
         # Linear warmup phase
         if self.current_step < self.warmup_steps:
@@ -125,6 +126,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
                 if self.patience_counter >= self.patience:
                     self.patience_counter = 0
                     new_lr = self.get_lr() * self.reduction_factor
+                    new_lr = max(new_lr, self.min_lr)
                     self.set_lr(self.optimizer, new_lr)
             else:
                 # Reset the patience counter if loss decreases or stays the same

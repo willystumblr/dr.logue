@@ -94,13 +94,13 @@ if __name__ == '__main__':
     args.add_argument('--output_unit', type=str, default='character')
     args.add_argument('--num_workers', type=int, default=16)
     args.add_argument('--num_threads', type=int, default=16)
-    args.add_argument('--init_lr', type=float, default=1e-06)
+    args.add_argument('--init_lr', type=float, default=5e-04)
     args.add_argument('--final_lr', type=float, default=1e-06)
-    args.add_argument('--peak_lr', type=float, default=5e-04) ## modified; 1e-4 => 5e-4
+    args.add_argument('--peak_lr', type=float, default=1e-03) ## modified; 1e-4 => 5e-4
     args.add_argument('--init_lr_scale', type=float, default=1e-02)
     args.add_argument('--final_lr_scale', type=float, default=5e-02)
     args.add_argument('--max_grad_norm', type=int, default=400)
-    args.add_argument('--warmup_steps', type=int, default=1000)
+    args.add_argument('--warmup_steps', type=int, default=5000)
     args.add_argument('--weight_decay', type=float, default=1e-05)
     args.add_argument('--reduction', type=str, default='mean')
     args.add_argument('--optimizer', type=str, default='adam')
