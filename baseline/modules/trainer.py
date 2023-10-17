@@ -39,7 +39,7 @@ def trainer(mode, config, dataloader, optimizer, model, criterion, metric, train
         if mode == 'train':
             optimizer.zero_grad()
             loss.backward()
-            optimizer.step(model)
+            optimizer.step(model, loss.item())
 
         total_num += int(input_lengths.sum())
         epoch_loss_total += loss.item()
