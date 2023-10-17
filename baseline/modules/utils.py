@@ -55,6 +55,8 @@ class TriStageLRScheduler(LearningRateScheduler):
 
         self.lr = self.init_lr
         self.update_step = 0
+        # Keeping track of loss
+        self.prev_loss = float('inf')
 
     def _decide_stage(self):
         if self.update_step < self.warmup_steps:
@@ -94,6 +96,44 @@ class TriStageLRScheduler(LearningRateScheduler):
 
         return self.lr
 
+class LossAwareLRScheduler(LearningRateScheduler):
+    """
+    Starts with init_lr, increases linearly to peak_lr over warmup_steps, and 
+    then adjusts the learning rate based on loss changes.
+    """
+    def __init__(self, optimizer, init_lr, peak_lr, warmup_steps, reduction_factor=0.9, patience=1):
+        super(LossAwareLRScheduler, self).__init__(optimizer, init_lr)
+        self.peak_lr = peak_lr
+        self.warmup_steps = warmup_steps
+        self.current_step = 0
+        self.reduction_factor = reduction_factor
+        self.patience = patience
+        self.patience_counter = 0
+        self.prev_loss = float('inf')
+    
+    def step(self, current_loss):
+        # Linear warmup phase
+        if self.current_step < self.warmup_steps:
+            lr = self.init_lr + (self.peak_lr - self.init_lr) * (self.current_step / self.warmup_steps)
+            self.set_lr(self.optimizer, lr)
+        # Adjusting phase based on loss
+        else:
+            # If current loss is greater than the previous loss
+            if current_loss > self.prev_loss:
+                self.patience_counter += 1
+                # If patience is exhausted, reduce the learning rate
+                if self.patience_counter >= self.patience:
+                    self.patience_counter = 0
+                    new_lr = self.get_lr() * self.reduction_factor
+                    self.set_lr(self.optimizer, new_lr)
+            else:
+                # Reset the patience counter if loss decreases or stays the same
+                self.patience_counter = 0
+        
+        # Update the previous loss and current_step for the next iteration
+        self.prev_loss = current_loss
+        self.current_step += 1
+
 
 class Optimizer(object):
     """
@@ -114,13 +154,13 @@ class Optimizer(object):
         self.max_grad_norm = max_grad_norm
         self.count = 0
 
-    def step(self, model):
+    def step(self, model, current_loss):
         if self.max_grad_norm > 0:
             torch.nn.utils.clip_grad_norm_(model.parameters(), self.max_grad_norm)
         self.optimizer.step()
 
         if self.scheduler is not None:
-            self.update()
+            self.update(current_loss)
             self.count += 1
 
             if self.scheduler_period == self.count:
@@ -133,11 +173,11 @@ class Optimizer(object):
         self.scheduler_period = scheduler_period
         self.count = 0
 
-    def update(self):
+    def update(self, current_loss):
         if isinstance(self.scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
             pass
         else:
-            self.scheduler.step()
+            self.scheduler.step(current_loss)
     
     def zero_grad(self):
         self.optimizer.zero_grad()
@@ -152,17 +192,22 @@ class Optimizer(object):
 
 
 def get_lr_scheduler(config, optimizer, epoch_time_step) -> LearningRateScheduler:
-
-    lr_scheduler = TriStageLRScheduler(
-        optimizer=optimizer,
-        init_lr=config.init_lr,
-        peak_lr=config.peak_lr,
-        final_lr=config.final_lr,
-        init_lr_scale=config.init_lr_scale,
-        final_lr_scale=config.final_lr_scale,
-        warmup_steps=config.warmup_steps,
-        total_steps=int(config.num_epochs * epoch_time_step),
-    )
+    if config.lr_scheduler == 'tri_stage_scheduler':        
+        lr_scheduler = TriStageLRScheduler(
+            optimizer=optimizer,
+            init_lr=config.init_lr,
+        )
+    else:
+        lr_scheduler = LossAwareLRScheduler(
+            optimizer=optimizer,
+            init_lr=config.init_lr,
+            peak_lr=config.peak_lr,
+            #final_lr=config.final_lr,
+            #init_lr_scale=config.init_lr_scale,
+            #final_lr_scale=config.final_lr_scale,
+            warmup_steps=config.warmup_steps,
+            #total_steps=int(config.num_epochs * epoch_time_step),
+        )
 
     return lr_scheduler
 
