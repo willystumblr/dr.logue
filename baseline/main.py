@@ -96,11 +96,13 @@ if __name__ == '__main__':
     args.add_argument('--num_threads', type=int, default=16)
     args.add_argument('--init_lr', type=float, default=5e-04)
     args.add_argument('--final_lr', type=float, default=1e-06)
-    args.add_argument('--peak_lr', type=float, default=1e-03) ## modified; 1e-4 => 5e-4
+    args.add_argument('--peak_lr', type=float, default=1e-03)
+    args.add_argument('--min_lr', type=float, default=1e-03)## modified; 1e-4 => 5e-4
     args.add_argument('--init_lr_scale', type=float, default=1e-02)
     args.add_argument('--final_lr_scale', type=float, default=5e-02)
     args.add_argument('--max_grad_norm', type=int, default=400)
     args.add_argument('--warmup_steps', type=int, default=5000)
+    args.add_argument('--decay_steps', type=int, default=500)
     args.add_argument('--weight_decay', type=float, default=1e-05)
     args.add_argument('--reduction', type=str, default='mean')
     args.add_argument('--optimizer', type=str, default='adam')
@@ -135,7 +137,8 @@ if __name__ == '__main__':
     args.add_argument('--normalize', type=bool, default=True)
     args.add_argument('--del_silence', type=bool, default=True)
     args.add_argument('--spec_augment', type=bool, default=True)
-    args.add_argument('--input_reverse', type=bool, default=False)
+    args.add_argument('--input_reverse', type=bool, default=False) 
+    #decay_steps, min_lr
 
     config = args.parse_args()
     warnings.filterwarnings('ignore')
