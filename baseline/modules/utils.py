@@ -105,7 +105,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
     Starts with init_lr, increases linearly to peak_lr over warmup_steps, and 
     then adjusts the learning rate based on loss changes.
     """
-    def __init__(self, optimizer, init_lr, peak_lr, min_lr, warmup_steps, reduction_factor=0.9, patience=2):
+    def __init__(self, optimizer, init_lr, peak_lr, min_lr, warmup_steps, decay_steps, reduction_factor=0.9, patience=2):
         super(LossAwareLRScheduler, self).__init__(optimizer, init_lr)
         self.init_lr = init_lr
         self.peak_lr = peak_lr
@@ -115,6 +115,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
         self.patience = patience
         self.patience_counter = 0
         self.prev_loss = float('inf')
+        self.decay_steps = decay_steps
         self.min_lr = min_lr # (self.init_lr)**2 / self.peak_lr
     def step(self, current_loss):
         # Linear warmup phase
@@ -124,6 +125,9 @@ class LossAwareLRScheduler(LearningRateScheduler):
             self.set_lr(self.optimizer, lr)
         # Adjusting phase based on loss
         else:
+            step = self.current_step - self.warmup_steps
+            if step % self.decay_steps == 0:
+                self.reset_min_lr()
             # If current loss is greater than the previous loss
             if current_loss > self.prev_loss:
                 self.patience_counter += 1
@@ -133,7 +137,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
                     new_lr = self.get_lr() * self.reduction_factor
                     new_lr = max(new_lr, self.min_lr)
                     self.set_lr(self.optimizer, new_lr)
-                    self.reset_min_lr()
+                    
             else:
                 # Reset the patience counter if loss decreases or stays the same
                 new_lr = self.get_lr() / self.reduction_factor
@@ -214,10 +218,12 @@ def get_lr_scheduler(config, optimizer, epoch_time_step) -> LearningRateSchedule
             optimizer=optimizer,
             init_lr=config.init_lr,
             peak_lr=config.peak_lr,
+            min_lr = config.min_lr,
             #min_lr=config.final_lr,
             #init_lr_scale=config.init_lr_scale,
             #final_lr_scale=config.final_lr_scale,
             warmup_steps=config.warmup_steps,
+            decay_steps=config.decay_steps,
             patience=config.lr_patience,
             #total_steps=int(config.num_epochs * epoch_time_step),
         )
