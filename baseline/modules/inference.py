@@ -9,7 +9,7 @@ from torch import Tensor
 from modules.vocab import KoreanSpeechVocabulary
 from modules.data import load_audio
 from modules.model import DeepSpeech2
-
+from modules.utils import revise
 
 def parse_audio(audio_path: str, del_silence: bool = False, audio_extension: str = 'pcm') -> Tensor:
     signal = load_audio(audio_path, del_silence, extension=audio_extension)
@@ -40,4 +40,4 @@ def single_infer(model, audio_path):
     y_hats = model.recognize(feature.unsqueeze(0).to(device), input_length)
     sentence = vocab.label_to_string(y_hats.cpu().detach().numpy())
 
-    return sentence
+    return revise(sentence)
