@@ -123,6 +123,7 @@ class CharacterErrorRate(ErrorRate):
             s1 (string): space-separated sentence
             s2 (string): space-separated sentence
         """
+        print(f"Target: {s1} \nPrediction: {s2}")
         s1 = s1.replace(' ', '')
         s2 = s2.replace(' ', '')
 
