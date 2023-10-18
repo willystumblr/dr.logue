@@ -16,9 +16,10 @@ class LearningRateScheduler(object):
     Note:
         Do not use this class directly, use one of the sub classes.
     """
-    def __init__(self, optimizer, init_lr):
+    def __init__(self, optimizer, init_lr, min_lr):
         self.optimizer = optimizer
         self.init_lr = init_lr
+        self.min_lr = min_lr
 
     def step(self, *args, **kwargs):
         raise NotImplementedError
@@ -31,6 +32,9 @@ class LearningRateScheduler(object):
     def get_lr(self):
         for g in self.optimizer.param_groups:
             return g['lr']
+    
+    def reset_min_lr(self):
+        self.min_lr *= 0.1
 
 
 class TriStageLRScheduler(LearningRateScheduler):
@@ -111,8 +115,8 @@ class LossAwareLRScheduler(LearningRateScheduler):
         self.patience = patience
         self.patience_counter = 0
         self.prev_loss = float('inf')
-        #self.min_lr = min_lr # (self.init_lr)**2 / self.peak_lr
-    def step(self, current_loss, min_lr):
+        self.min_lr = min_lr # (self.init_lr)**2 / self.peak_lr
+    def step(self, current_loss):
         # Linear warmup phase
         if self.current_step < self.warmup_steps:
             lr = self.init_lr + (self.peak_lr - self.init_lr) * (self.current_step / self.warmup_steps)
@@ -127,8 +131,9 @@ class LossAwareLRScheduler(LearningRateScheduler):
                 if self.patience_counter >= self.patience:
                     self.patience_counter = 0
                     new_lr = self.get_lr() * self.reduction_factor
-                    new_lr = max(new_lr, min_lr)
+                    new_lr = max(new_lr, self.min_lr)
                     self.set_lr(self.optimizer, new_lr)
+                    self.reset_min_lr()
             else:
                 # Reset the patience counter if loss decreases or stays the same
                 new_lr = self.get_lr() / self.reduction_factor
@@ -139,6 +144,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
         # Update the previous loss and current_step for the next iteration
         self.prev_loss = current_loss
         self.current_step += 1
+        
 
 
 class Optimizer(object):
