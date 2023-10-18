@@ -131,6 +131,7 @@ if __name__ == '__main__':
     args.add_argument('--time_mask_num', type=int, default=4)
     args.add_argument('--freq_mask_num', type=int, default=2)
     args.add_argument('--patience', type=int, default=2)
+    args.add_argument('--lr_patience', type=int, default=5)
     args.add_argument('--normalize', type=bool, default=True)
     args.add_argument('--del_silence', type=bool, default=True)
     args.add_argument('--spec_augment', type=bool, default=True)
