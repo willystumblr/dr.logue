@@ -106,7 +106,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
     then adjusts the learning rate based on loss changes.
     """
     def __init__(self, optimizer, init_lr, peak_lr, min_lr, warmup_steps, decay_steps, reduction_factor=0.9, patience=2):
-        super(LossAwareLRScheduler, self).__init__(optimizer, init_lr)
+        super(LossAwareLRScheduler, self).__init__(optimizer, init_lr, min_lr)
         self.init_lr = init_lr
         self.peak_lr = peak_lr
         self.warmup_steps = warmup_steps
