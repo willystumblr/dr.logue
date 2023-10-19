@@ -96,8 +96,8 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
             except:
                 print(tokens)
                 status='err'
-            if len(tmp)>=2:
-                result.append(tmp)
+            # if len(tmp)>=2:
+            #     result.append(tmp)
         #if len(result) >= 2:
             #print(result)
         transcript.append(int(self.eos_id))
