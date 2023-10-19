@@ -5,8 +5,6 @@ from dataclasses import dataclass
 import time
 from nova import DATASET_PATH
 
-from modules.utils import revise
-
 
 def trainer(mode, config, dataloader, optimizer, model, criterion, metric, train_begin_time, device):
 
@@ -37,7 +35,7 @@ def trainer(mode, config, dataloader, optimizer, model, criterion, metric, train
         )
 
         y_hats = outputs.max(-1)[1]
-        y_hats_revised = revise(y_hats)
+        #y_hats_revised = revise(y_hats)
         if mode == 'train':
             optimizer.zero_grad()
             loss.backward()
@@ -54,7 +52,7 @@ def trainer(mode, config, dataloader, optimizer, model, criterion, metric, train
             elapsed = current_time - begin_time
             epoch_elapsed = (current_time - epoch_begin_time) / 60.0
             train_elapsed = (current_time - train_begin_time) / 3600.0
-            cer = metric(targets[:, 1:], y_hats_revised)
+            cer = metric(targets[:, 1:], y_hats)
             print(log_format.format(
                 cnt, len(dataloader), loss,
                 cer, elapsed, epoch_elapsed, train_elapsed,
