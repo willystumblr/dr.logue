@@ -35,7 +35,9 @@ class LearningRateScheduler(object):
     
     def reset_min_lr(self):
         self.min_lr *= 0.1
-
+    
+    def reset_peak_lr(self):
+        self.peak_lr *= 0.1
 
 class TriStageLRScheduler(LearningRateScheduler):
     """
@@ -128,6 +130,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
             step = self.current_step - self.warmup_steps
             if step % self.decay_steps == 0:
                 self.reset_min_lr()
+                self.reset_peak_lr()
             # If current loss is greater than the previous loss
             if current_loss > self.prev_loss:
                 self.patience_counter += 1
@@ -138,12 +141,12 @@ class LossAwareLRScheduler(LearningRateScheduler):
                     new_lr = max(new_lr, self.min_lr)
                     self.set_lr(self.optimizer, new_lr)
                     
-            else:
+            #else:
                 # Reset the patience counter if loss decreases or stays the same
-                new_lr = self.get_lr() / self.reduction_factor
-                new_lr = min(new_lr, self.peak_lr)
-                self.set_lr(self.optimizer, new_lr)
-                self.patience_counter = 0
+                #new_lr = self.get_lr() / self.reduction_factor
+                #new_lr = min(new_lr, self.peak_lr)
+                #self.set_lr(self.optimizer, new_lr)
+                #self.patience_counter = 0
         
         # Update the previous loss and current_step for the next iteration
         self.prev_loss = current_loss
