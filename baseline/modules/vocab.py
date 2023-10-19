@@ -102,7 +102,7 @@ class KoreanSpeechVocabulary(Vocabulary):
             raise IOError("Character label file (csv format) doesn`t exist : {0}".format(label_path))
 
     
-    def revise(sentence: str):
+    def revise(self, sentence: str):
         assert type(sentence) == str, "Input is not a string"
         words = sentence.split()
         result = []
