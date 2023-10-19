@@ -4,7 +4,7 @@ import math
 from dataclasses import dataclass
 import time
 from nova import DATASET_PATH
-from modules.utils import revise
+#from modules.utils import revise
 
 def trainer(mode, config, dataloader, optimizer, model, criterion, metric, train_begin_time, device):
 

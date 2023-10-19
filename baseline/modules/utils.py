@@ -249,18 +249,3 @@ def get_criterion(config, vocab: Vocabulary) -> nn.Module:
 
     return criterion
 
-def revise(sentence: str):
-    #assert type(sentence) == str, "Input is not a string"
-    words = sentence[0].split()
-    result = []
-    for word in words:
-        tmp = ''    
-        for t in word:
-            if not tmp:
-                tmp += t
-            elif tmp[-1]!= t:
-                tmp += t
-        # if tmp == '스로':
-        #     tmp = '스스로'
-        result.append(tmp)
-    return ' '.join(result)

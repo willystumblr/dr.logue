@@ -64,7 +64,7 @@ class KoreanSpeechVocabulary(Vocabulary):
                 elif label.item() == self.blank_id:
                     continue
                 sentence += self.id_dict[label.item()]
-                sentence = revise(sentence)
+                sentence = self.revise(sentence)
             sentences.append(sentence)
         return sentences
 
@@ -98,3 +98,20 @@ class KoreanSpeechVocabulary(Vocabulary):
             return unit2id, id2unit
         except IOError:
             raise IOError("Character label file (csv format) doesn`t exist : {0}".format(label_path))
+
+    
+    def revise(sentence: str):
+        assert type(sentence) == str, "Input is not a string"
+        words = sentence.split()
+        result = []
+        for word in words:
+            tmp = ''    
+            for t in word:
+                if not tmp:
+                    tmp += t
+                elif tmp[-1]!= t:
+                    tmp += t
+            # if tmp == '스로':
+            #     tmp = '스스로'
+            result.append(tmp)
+        return ' '.join(result)
