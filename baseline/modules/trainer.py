@@ -4,7 +4,7 @@ import math
 from dataclasses import dataclass
 import time
 from nova import DATASET_PATH
-
+from modules.utils import revise
 
 def trainer(mode, config, dataloader, optimizer, model, criterion, metric, train_begin_time, device):
 
@@ -35,7 +35,10 @@ def trainer(mode, config, dataloader, optimizer, model, criterion, metric, train
         )
 
         y_hats = outputs.max(-1)[1]
-        #y_hats_revised = revise(y_hats)
+        print(y_hats)
+        print(type(y_hats))
+        quit()
+        y_hats = revise(y_hats)
         if mode == 'train':
             optimizer.zero_grad()
             loss.backward()
