@@ -80,15 +80,26 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
         """ Parses transcript """
         tokens = transcript.split(' ')
         transcript = list()
-
         transcript.append(int(self.sos_id))
+        result = []
         for token in tokens:
+            tmp = []
+            if len(tmp) == 0:
+                tmp.append(token)
+            elif tmp[-1] == token:
+                tmp.append(token)
+                print(token,' is appended')
+
             try:
                 transcript.append(int(token))
                 status='nor'
             except:
                 print(tokens)
                 status='err'
+            if len(tmp)>=2:
+                result.append(tmp)
+        if len(result) >= 2:
+            print(result)
         transcript.append(int(self.eos_id))
 
         return transcript, status
