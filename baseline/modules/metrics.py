@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
+from modules.utils import revise
 
 def get_metric(metric_name, vocab):
     if metric_name == 'CER':
@@ -157,7 +157,6 @@ class WordErrorRate(ErrorRate):
             s1 (string): space-separated sentence
             s2 (string): space-separated sentence
         """
-
         # build mapping of words to integers
         b = set(s1.split() + s2.split())
         word2char = dict(zip(b, range(len(b))))
