@@ -1,6 +1,4 @@
 import csv
-from modules.utils import revise
-
 
 class Vocabulary(object):
     """
