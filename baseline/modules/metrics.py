@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from modules.utils import revise
+#from modules.utils import revise
 
 def get_metric(metric_name, vocab):
     if metric_name == 'CER':
