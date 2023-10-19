@@ -93,7 +93,7 @@ class ErrorRate(object):
 
         for (target, y_hat) in zip(targets, y_hats):
             s1 = self.vocab.label_to_string(target)
-            s2 = self.vocab.label_to_string(y_hat)
+            s2 = self.vocab.label_to_string(y_hat, target=False)
 
             dist, length = self.metric(s1, s2)
 

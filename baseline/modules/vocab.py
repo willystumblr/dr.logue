@@ -33,7 +33,7 @@ class KoreanSpeechVocabulary(Vocabulary):
 
         return len(self.vocab_dict)
 
-    def label_to_string(self, labels):
+    def label_to_string(self, labels, target=True):
         """
         Converts label to string (number => Hangeul)
 
@@ -52,7 +52,8 @@ class KoreanSpeechVocabulary(Vocabulary):
                 elif label.item() == self.blank_id:
                   continue
                 sentence += self.id_dict[label.item()]
-                sentence = revise(sentence)
+                if not target:
+                    sentence = self.revise(sentence)
             return sentence
 
         sentences = list()
@@ -64,7 +65,8 @@ class KoreanSpeechVocabulary(Vocabulary):
                 elif label.item() == self.blank_id:
                     continue
                 sentence += self.id_dict[label.item()]
-                sentence = self.revise(sentence)
+                if not target:
+                    sentence = self.revise(sentence)
             sentences.append(sentence)
         return sentences
 
