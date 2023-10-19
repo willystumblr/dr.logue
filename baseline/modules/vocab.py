@@ -1,4 +1,5 @@
 import csv
+from modules.utils import revise
 
 
 class Vocabulary(object):
@@ -53,6 +54,7 @@ class KoreanSpeechVocabulary(Vocabulary):
                 elif label.item() == self.blank_id:
                   continue
                 sentence += self.id_dict[label.item()]
+                sentence = revise(sentence)
             return sentence
 
         sentences = list()
@@ -64,6 +66,7 @@ class KoreanSpeechVocabulary(Vocabulary):
                 elif label.item() == self.blank_id:
                     continue
                 sentence += self.id_dict[label.item()]
+                sentence = revise(sentence)
             sentences.append(sentence)
         return sentences
 
