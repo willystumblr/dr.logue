@@ -33,12 +33,8 @@ def trainer(mode, config, dataloader, optimizer, model, criterion, metric, train
             tuple(output_lengths),
             tuple(target_lengths)
         )
-
         y_hats = outputs.max(-1)[1]
-        print(y_hats)
-        print(type(y_hats))
-        quit()
-        y_hats = revise(y_hats)
+        #y_hats = revise(y_hats)
         if mode == 'train':
             optimizer.zero_grad()
             loss.backward()
