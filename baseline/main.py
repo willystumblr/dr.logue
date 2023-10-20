@@ -102,7 +102,7 @@ if __name__ == '__main__':
     args.add_argument('--final_lr_scale', type=float, default=5e-02)
     args.add_argument('--max_grad_norm', type=int, default=400)
     args.add_argument('--warmup_steps', type=int, default=2000)
-    args.add_argument('--decay_steps', type=int, default=500)
+    args.add_argument('--decay_steps', type=int, default=1000)
     args.add_argument('--weight_decay', type=float, default=1e-05)
     args.add_argument('--reduction', type=str, default='mean')
     args.add_argument('--optimizer', type=str, default='adam')
