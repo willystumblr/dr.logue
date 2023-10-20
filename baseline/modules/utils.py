@@ -16,10 +16,11 @@ class LearningRateScheduler(object):
     Note:
         Do not use this class directly, use one of the sub classes.
     """
-    def __init__(self, optimizer, init_lr, min_lr):
+    def __init__(self, optimizer, init_lr, min_lr, peak_lr):
         self.optimizer = optimizer
         self.init_lr = init_lr
         self.min_lr = min_lr
+        self.peak_lr = peak_lr
 
     def step(self, *args, **kwargs):
         raise NotImplementedError
@@ -108,7 +109,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
     then adjusts the learning rate based on loss changes.
     """
     def __init__(self, optimizer, init_lr, peak_lr, min_lr, warmup_steps, decay_steps, reduction_factor=0.5, patience=2):
-        super(LossAwareLRScheduler, self).__init__(optimizer, init_lr, min_lr)
+        super(LossAwareLRScheduler, self).__init__(optimizer, init_lr, min_lr, peak_lr)
         self.init_lr = init_lr
         self.peak_lr = peak_lr
         self.warmup_steps = warmup_steps
@@ -129,9 +130,11 @@ class LossAwareLRScheduler(LearningRateScheduler):
         else:
             step = self.current_step - self.warmup_steps
             if step % self.decay_steps == 0:
+                #print(f'before - min_lr:{self.min_lr}, peak_lr:{self.peak_lr}') 
                 self.reset_min_lr()
                 self.reset_peak_lr()
-                self.set_lr(self.optimizer, peak_lr)
+                #print(f'after - min_lr:{self.min_lr}, peak_lr:{self.peak_lr}')
+                self.set_lr(self.optimizer, self.peak_lr)
             # If current loss is greater than the previous loss
             if current_loss > self.prev_loss:
                 self.patience_counter += 1
