@@ -134,7 +134,9 @@ class LossAwareLRScheduler(LearningRateScheduler):
                 self.reset_min_lr()
                 self.reset_peak_lr()
                 #print(f'after - min_lr:{self.min_lr}, peak_lr:{self.peak_lr}')
-                self.set_lr(self.optimizer, self.peak_lr)
+                current_lr = self.get_lr()
+                lr = min(self.peak_lr, current_lr)
+                self.set_lr(self.optimizer, lr)
             # If current loss is greater than the previous loss
             if current_loss > self.prev_loss:
                 self.patience_counter += 1
