@@ -18,6 +18,10 @@ from modules.vocab import Vocabulary
 from modules.audio.core import load_audio
 from modules.audio.parser import SpectrogramParser
 
+import random
+
+def get_random_value():
+    return 1 if random.random() < 0.4 else 0
 
 class SpectrogramDataset(Dataset, SpectrogramParser):
     """
@@ -126,9 +130,16 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
     def count(self):
         return len(self.audio_paths)
 
+def add_gaussian_noise(signal, noise_level=0.005):
+    noise = np.random.normal(0, noise_level, len(signal))
+    noisy_signal = signal + noise
+    return np.clip(noisy_signal, -1.0, 1.0)
 
 def parse_audio(audio_path: str, del_silence: bool = False, audio_extension: str = 'pcm') -> Tensor:
     signal = load_audio(audio_path, del_silence, extension=audio_extension)
+    add_noise = get_random_value()
+    if add_noise:
+        signal = add_gaussian_noise(signal)
     feature = torchaudio.compliance.kaldi.fbank(
         waveform=Tensor(signal).unsqueeze(0),
         num_mel_bins=80,
