@@ -35,10 +35,10 @@ class LearningRateScheduler(object):
             return g['lr']
     
     def reset_min_lr(self):
-        self.min_lr *= 0.5
+        self.min_lr *= 0.8
     
     def reset_peak_lr(self):
-        self.peak_lr *= 0.5
+        self.peak_lr *= 0.8
 
 class TriStageLRScheduler(LearningRateScheduler):
     """
@@ -129,7 +129,7 @@ class LossAwareLRScheduler(LearningRateScheduler):
         # Adjusting phase based on loss
         else:
             step = self.current_step - self.warmup_steps
-            if step % self.decay_steps == 0:
+            if step != 0 and step % self.decay_steps == 0:
                 #print(f'before - min_lr:{self.min_lr}, peak_lr:{self.peak_lr}') 
                 self.reset_min_lr()
                 self.reset_peak_lr()
