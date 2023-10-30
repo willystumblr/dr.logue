@@ -33,6 +33,16 @@ class LearningRateScheduler(object):
     def get_lr(self):
         for g in self.optimizer.param_groups:
             return g['lr']
+    
+    def get_lr(self):
+        for g in self.optimizer.param_groups:
+            return g['lr']
+    
+    def reset_min_lr(self):
+        self.min_lr *= 0.8
+    
+    def reset_peak_lr(self):
+        self.peak_lr *= 0.8
 
 
 class TriStageLRScheduler(LearningRateScheduler):
