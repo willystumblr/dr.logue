@@ -16,9 +16,11 @@ class LearningRateScheduler(object):
     Note:
         Do not use this class directly, use one of the sub classes.
     """
-    def __init__(self, optimizer, init_lr):
+    def __init__(self, optimizer, init_lr, min_lr, peak_lr):
         self.optimizer = optimizer
         self.init_lr = init_lr
+        self.min_lr = min_lr
+        self.peak_lr = peak_lr
 
     def step(self, *args, **kwargs):
         raise NotImplementedError
