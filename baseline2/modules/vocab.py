@@ -106,7 +106,7 @@ class KoreanSpeechVocabulary(Vocabulary):
             '스스로': 'PLACEHOLDER2',
             '겹겹이': 'PLACEHOLDER3',
             # ... add more if needed
-        }
+        } # or maybe we can create a .json for these words...
 
         reverse_whitelist = {v: k for k, v in whitelist.items()}
 
