@@ -1,5 +1,5 @@
 import csv
-
+import re
 
 class Vocabulary(object):
     """
@@ -97,3 +97,52 @@ class KoreanSpeechVocabulary(Vocabulary):
             return unit2id, id2unit
         except IOError:
             raise IOError("Character label file (csv format) doesn`t exist : {0}".format(label_path))
+        
+    def revise(sentence: str):
+        whitelist = {
+            '간간이': 'PLACEHOLDER1',
+            '스스로': 'PLACEHOLDER2',
+            '겹겹이': 'PLACEHOLDER3',
+            # ... add more if needed
+        }
+
+        reverse_whitelist = {v: k for k, v in whitelist.items()}
+
+        # Temporarily replace valid words with placeholders
+        for word, placeholder in whitelist.items():
+            sentence = sentence.replace(word, placeholder)
+
+        # Handle repeated characters, syllables, or punctuation marks
+        pattern = r'(.)\1+'
+        sentence = re.sub(pattern, r'\1', sentence)
+
+        # Handle specific cases of repeated word components
+        word_pattern = r'(\w\w+)\1+'
+        sentence = re.sub(word_pattern, r'\1', sentence)
+
+        # Replace placeholders back with valid words
+        for placeholder, word in reverse_whitelist.items():
+            sentence = sentence.replace(placeholder, word)
+
+        return sentence
+    # def revise(self, sentence: str, redup_path: str):
+    #     assert type(sentence) == str, "Input is not a string"
+    #     words = sentence.split()
+    #     result = []
+    #     whitelist = {
+    #         '간간이': 'PLACEHOLDER1',
+    #         '스스로': 'PLACEHOLDER2',
+    #         '겹겹이': 'PLACEHOLDER3'
+    #     }
+                
+    #     for word in words:
+    #         revised_w = ''    
+    #         for t in word:
+    #             if not revised_w:
+    #                 revised_w += t
+    #             elif revised_w[-1]!= t:
+    #                 revised_w += t
+    #         if revised_w == '스로':
+    #             revised_w = '스스로'
+    #         result.append(revised_w)
+    #     return ' '.join(result)
