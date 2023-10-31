@@ -175,6 +175,9 @@ if __name__ == '__main__':
 
         train_begin_time = time.time()
 
+        best_valid_loss = float('inf')
+        epochs_no_improve = 0
+        
         for epoch in range(num_epochs):
             print('[INFO] Epoch %d start' % epoch)
 
