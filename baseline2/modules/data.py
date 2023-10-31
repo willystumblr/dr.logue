@@ -8,6 +8,9 @@ import random
 import math
 import pydub
 
+import scipy.fft
+import numpy as np
+
 from torch import Tensor
 from torch.utils.data import Dataset
 from torch.utils.data import DataLoader
@@ -129,6 +132,18 @@ def parse_audio(audio_path: str, del_silence: bool = False, audio_extension: str
 
     return torch.FloatTensor(feature).transpose(0, 1)
 
+def noise_filter(signal, threshold=1e3, target=False):
+    if target == True: # only for inference
+        # Transform signal to freq domain using FFT
+        spectrum = scipy.fft.fft(signal)
+
+        # remove low frequency
+        spectrum[np.abs(spectrum) < threshold] = 0
+
+        # revert to time domain
+        signal = scipy.fft.ifft(spectrum).real
+        
+    return signal
 
 def load_dataset(transcripts_path):
     """
