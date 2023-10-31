@@ -225,7 +225,19 @@ if __name__ == '__main__':
             )
 
             print('[INFO] Epoch %d (Validation) Loss %0.4f  CER %0.4f' % (epoch, valid_loss, valid_cer))
-
+            
+            if valid_loss < best_valid_loss:
+                best_valid_loss = valid_loss
+                epochs_no_improve = 0
+            else:
+                epochs_no_improve += 1
+                print(f"Best valid loss is not updated.\n{valid_loss} > {best_valid_loss}")
+                print(f"Patience Epochs: {epochs_no_improve}")
+            if epochs_no_improve == config.patience:
+                print('[INFO] Early stopping triggered after {} epochs with no improvement in validation loss.'.format(config.patience))
+                torch.cuda.empty_cache()
+                break
+            
             nova.report(
                 summary=True,
                 epoch=epoch,
