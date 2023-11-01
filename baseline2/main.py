@@ -162,15 +162,17 @@ if __name__ == '__main__':
         nova.paused(scope=locals())
 
     if config.mode == 'train':
+        label_path = os.path.join(DATASET_PATH, 'train', 'train_label')
+        preprocessing(label_path, os.getcwd())
         if config.pretrain:
             pretrain_dataset = load_dataset("Bingsu/zeroth-korean") #
             train_dataset, valid_dataset = zeroth_dataset_process(config, pretrain_dataset['train'], pretrain_dataset['test'], vocab)
+            
         else:
             config.dataset_path = os.path.join(DATASET_PATH, 'train', 'train_data')
             train_dataset, valid_dataset = split_dataset(config, os.path.join(os.getcwd(), 'transcripts.txt'), vocab)
         
-        label_path = os.path.join(DATASET_PATH, 'train', 'train_label')
-        preprocessing(label_path, os.getcwd())
+        
             
 
         lr_scheduler = get_lr_scheduler(config, optimizer, len(train_dataset))
