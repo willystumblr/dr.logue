@@ -7,6 +7,7 @@ import time
 import json
 import argparse
 from glob import glob
+from datasets import load_dataset
 
 from modules.preprocess import preprocessing
 from modules.trainer import trainer
@@ -23,7 +24,7 @@ from modules.audio import (
 )
 from modules.model import build_model
 from modules.vocab import KoreanSpeechVocabulary
-from modules.data import split_dataset, collate_fn
+from modules.data import split_dataset, collate_fn, zeroth_dataset_process
 from modules.utils import Optimizer
 from modules.metrics import get_metric
 from modules.inference import single_infer
@@ -139,7 +140,8 @@ if __name__ == '__main__':
     args.add_argument('--del_silence', type=bool, default=True)
     args.add_argument('--spec_augment', type=bool, default=True)
     args.add_argument('--input_reverse', type=bool, default=False) 
-
+    args.add_argument('--pretrain', type=bool, default=False)
+    
     config = args.parse_args()
     warnings.filterwarnings('ignore')
 
@@ -160,11 +162,16 @@ if __name__ == '__main__':
         nova.paused(scope=locals())
 
     if config.mode == 'train':
-
-        config.dataset_path = os.path.join(DATASET_PATH, 'train', 'train_data')
+        if config.pretrain:
+            pretrain_dataset = load_dataset("Bingsu/zeroth-korean") #
+            train_dataset, valid_dataset = zeroth_dataset_process(pretrain_dataset['train'], pretrain_dataset['test'], vocab)
+        else:
+            config.dataset_path = os.path.join(DATASET_PATH, 'train', 'train_data')
+            train_dataset, valid_dataset = split_dataset(config, os.path.join(os.getcwd(), 'transcripts.txt'), vocab)
+        
         label_path = os.path.join(DATASET_PATH, 'train', 'train_label')
         preprocessing(label_path, os.getcwd())
-        train_dataset, valid_dataset = split_dataset(config, os.path.join(os.getcwd(), 'transcripts.txt'), vocab)
+            
 
         lr_scheduler = get_lr_scheduler(config, optimizer, len(train_dataset))
         optimizer = Optimizer(optimizer, lr_scheduler, int(len(train_dataset)*config.num_epochs), config.max_grad_norm)
