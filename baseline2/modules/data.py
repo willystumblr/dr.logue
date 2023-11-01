@@ -68,7 +68,7 @@ class ZerothSpectrogramDataset(Dataset, ZerothSpectrogramParser):
         transcript, status = self.parse_transcript(self.dataset[idx])
 
         if status == 'err':
-            print(self.dataset[idx]['text'])
+            print(self.dataset[idx]['transcript'])
             print(idx)
             
         
@@ -76,7 +76,7 @@ class ZerothSpectrogramDataset(Dataset, ZerothSpectrogramParser):
 
     def parse_transcript(self, dataset):
         """ Parses transcript """
-        transcript = dataset['text']
+        transcript = dataset['transcript']
         tokens = transcript.split(' ')
         transcript = list()
 
