@@ -172,6 +172,7 @@ class SpectrogramDataset(Dataset, SpectrogramParser):
 
     def parse_transcript(self, transcript):
         """ Parses transcript """
+        print(transcript)
         tokens = transcript.split(' ')
         transcript = list()
 
