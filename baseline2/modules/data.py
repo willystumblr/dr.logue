@@ -263,6 +263,29 @@ def load_dataset(transcripts_path):
 
     return audio_paths, transcripts
 
+def zeroth_dataset_process(config, train, valid, vocab: Vocabulary):
+    train_dataset = ZerothSpectrogramDataset(
+        dataset=train,
+        sos_id=vocab.sos_id, 
+        eos_id=vocab.eos_id,
+        config=config,
+        spec_augment=config.spec_augment,
+        dataset_path=config.dataset_path,
+        #audio_extension=config.audio_extension,
+    )
+
+    valid_dataset = ZerothSpectrogramDataset(
+        dataset=valid,
+        sos_id=vocab.sos_id, 
+        eos_id=vocab.eos_id,
+        config=config,
+        spec_augment=False,
+        dataset_path=config.dataset_path,
+        #audio_extension=config.audio_extension,
+    )
+
+    return train_dataset, valid_dataset
+    pass
 
 def split_dataset(config, transcripts_path: str, vocab: Vocabulary, valid_size=.2):
     """
