@@ -47,10 +47,11 @@ class ZerothSpectrogramDataset(Dataset, ZerothSpectrogramParser):
             sos_id=sos_id, eos_id=eos_id, transform_method=config.transform_method,
             
         )
-        self.augment_methods = [self.VANILLA] * len(self.dataset)
+        #self.augment_methods = [self.VANILLA] * len(self.dataset)
         self.dataset = dataset
         self.dataset_size = len(self.dataset)
         self._augment(spec_augment)
+        self.augment_methods = [self.VANILLA] * len(self.dataset)
         self.shuffle()
         
         
@@ -270,7 +271,7 @@ def zeroth_dataset_process(config, train, valid, vocab: Vocabulary):
         eos_id=vocab.eos_id,
         config=config,
         spec_augment=config.spec_augment,
-        dataset_path=config.dataset_path,
+        #dataset_path=config.dataset_path,
         #audio_extension=config.audio_extension,
     )
 
@@ -280,7 +281,7 @@ def zeroth_dataset_process(config, train, valid, vocab: Vocabulary):
         eos_id=vocab.eos_id,
         config=config,
         spec_augment=False,
-        dataset_path=config.dataset_path,
+        #dataset_path=config.dataset_path,
         #audio_extension=config.audio_extension,
     )
 
