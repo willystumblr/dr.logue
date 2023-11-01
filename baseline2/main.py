@@ -164,7 +164,7 @@ if __name__ == '__main__':
     if config.mode == 'train':
         if config.pretrain:
             pretrain_dataset = load_dataset("Bingsu/zeroth-korean") #
-            train_dataset, valid_dataset = zeroth_dataset_process(config, pretrain_dataset['train'], pretrain_dataset['test'], vocab)
+            train_dataset, valid_dataset = zeroth_dataset_process(config, pretrain_dataset['train'], pretrain_dataset['test'], vocab, os.getcwd())
             #label_path = os.path.join(DATASET_PATH, 'train', 'train_label')
             zerothpreprocessing(train_dataset, os.getcwd())
             zerothpreprocessing(valid_dataset, os.getcwd())

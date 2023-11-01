@@ -118,7 +118,8 @@ def generate_and_store_character_script(dataset, labels_dest):
     for data in dataset:
         char_id_transcript = sentence_to_target(data['text'], char2id)
         dataset['transcript'] = char_id_transcript
-
+    return dataset
+    
 def preprocessing(transcripts_dest, labels_dest):
     transcript_df = pd.read_csv(transcripts_dest)
     generate_character_script(transcript_df, labels_dest)
@@ -126,6 +127,7 @@ def preprocessing(transcripts_dest, labels_dest):
     print('[INFO] Preprocessing is Done')
     
 def zerothpreprocessing(dataset, labels_dest):
-    generate_and_store_character_script(dataset, labels_dest)
+    processed_dataset = generate_and_store_character_script(dataset, labels_dest)
 
     print('[INFO] Preprocessing is Done')
+    return processed_dataset

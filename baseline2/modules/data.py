@@ -20,6 +20,7 @@ from sklearn.model_selection import train_test_split
 from modules.vocab import Vocabulary
 from modules.audio.core import load_audio
 from modules.audio.parser import SpectrogramParser, ZerothSpectrogramParser
+from modules.preprocess import zerothpreprocessing
 
 
 class ZerothSpectrogramDataset(Dataset, ZerothSpectrogramParser):
@@ -265,9 +266,12 @@ def load_dataset(transcripts_path):
 
     return audio_paths, transcripts
 
-def zeroth_dataset_process(config, train, valid, vocab: Vocabulary):
+def zeroth_dataset_process(config, train, valid, vocab: Vocabulary, labels_dest):
+    train_set = zerothpreprocessing(train, labels_dest)
+    valid_set = zerothpreprocessing(valid, labels_dest)
+    
     train_dataset = ZerothSpectrogramDataset(
-        dataset=train,
+        dataset=train_set,
         sos_id=vocab.sos_id, 
         eos_id=vocab.eos_id,
         config=config,
@@ -277,7 +281,7 @@ def zeroth_dataset_process(config, train, valid, vocab: Vocabulary):
     )
 
     valid_dataset = ZerothSpectrogramDataset(
-        dataset=valid,
+        dataset=valid_set,
         sos_id=vocab.sos_id, 
         eos_id=vocab.eos_id,
         config=config,
