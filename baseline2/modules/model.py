@@ -336,16 +336,20 @@ class DeepSpeech2Extractor(Conv2dExtractor):
         super(DeepSpeech2Extractor, self).__init__(input_dim=input_dim, activation=activation)
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.conv = MaskCNN(
-            nn.Sequential(
-                nn.Conv2d(in_channels, out_channels, kernel_size=(41, 11), stride=(2, 2), padding=(20, 5), bias=False),
-                nn.BatchNorm2d(out_channels),
-                self.activation,
-                nn.Conv2d(out_channels, out_channels, kernel_size=(21, 11), stride=(2, 1), padding=(10, 5), bias=False),
-                nn.BatchNorm2d(out_channels),
-                self.activation,
-            )
-        )
+        print(in_channels)
+        print(out_channels[0])
+        # self.conv = MaskCNN(
+        #     nn.Sequential(
+        #         nn.Conv2d(in_channels, out_channels, kernel_size=(41, 11), stride=(2, 2), padding=(20, 5), bias=False),
+        #         nn.BatchNorm2d(out_channels),
+        #         self.activation,
+        #         nn.Conv2d(out_channels, out_channels, kernel_size=(21, 11), stride=(2, 1), padding=(10, 5), bias=False),
+        #         nn.BatchNorm2d(out_channels),
+        #         self.activation,
+        #     )
+        # )
+        self.conv = MaskCNN(models.vgg19(pretrained=True).features)
+        quit()
 
     def forward(self, inputs: Tensor, input_lengths: Tensor) -> Tuple[Tensor, Tensor]:
         return super().forward(inputs, input_lengths)
