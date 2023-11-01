@@ -3,6 +3,7 @@ import math
 
 import torch
 from torch import Tensor
+import torchvision.models as models
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.nn.init as init
@@ -279,25 +280,29 @@ class VGGExtractor(Conv2dExtractor):
         super(VGGExtractor, self).__init__(input_dim=input_dim, activation=activation)
         self.in_channels = in_channels
         self.out_channels = out_channels
-        self.conv = MaskCNN(
-            nn.Sequential(
-                nn.Conv2d(in_channels, out_channels[0], kernel_size=3, stride=1, padding=1, bias=False),
-                nn.BatchNorm2d(num_features=out_channels[0]),
-                self.activation,
-                nn.Conv2d(out_channels[0], out_channels[0], kernel_size=3, stride=1, padding=1, bias=False),
-                nn.BatchNorm2d(num_features=out_channels[0]),
-                self.activation,
-                nn.MaxPool2d(2, stride=2),
-                nn.Conv2d(out_channels[0], out_channels[1], kernel_size=3, stride=1, padding=1, bias=False),
-                nn.BatchNorm2d(num_features=out_channels[1]),
-                self.activation,
-                nn.Conv2d(out_channels[1], out_channels[1], kernel_size=3, stride=1, padding=1, bias=False),
-                nn.BatchNorm2d(num_features=out_channels[1]),
-                self.activation,
-                nn.MaxPool2d(2, stride=2),
-            )
-        )
-
+        print(in_channels)
+        print(out_channels[0])
+        # self.conv = MaskCNN(
+        #     nn.Sequential(
+        #         nn.Conv2d(in_channels, out_channels[0], kernel_size=3, stride=1, padding=1, bias=False),
+        #         nn.BatchNorm2d(num_features=out_channels[0]),
+        #         self.activation,
+        #         nn.Conv2d(out_channels[0], out_channels[0], kernel_size=3, stride=1, padding=1, bias=False),
+        #         nn.BatchNorm2d(num_features=out_channels[0]),
+        #         self.activation,
+        #         nn.MaxPool2d(2, stride=2),
+        #         nn.Conv2d(out_channels[0], out_channels[1], kernel_size=3, stride=1, padding=1, bias=False),
+        #         nn.BatchNorm2d(num_features=out_channels[1]),
+        #         self.activation,
+        #         nn.Conv2d(out_channels[1], out_channels[1], kernel_size=3, stride=1, padding=1, bias=False),
+        #         nn.BatchNorm2d(num_features=out_channels[1]),
+        #         self.activation,
+        #         nn.MaxPool2d(2, stride=2),
+        #     )
+        # )
+        self.conv = MaskCNN(models.vgg19(pretrained=True).features)
+        quit()
+        
     def forward(self, inputs: Tensor, input_lengths: Tensor) -> Tuple[Tensor, Tensor]:
         return super().forward(inputs, input_lengths)
 
