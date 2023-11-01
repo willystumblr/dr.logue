@@ -19,9 +19,101 @@ from sklearn.model_selection import train_test_split
 
 from modules.vocab import Vocabulary
 from modules.audio.core import load_audio
-from modules.audio.parser import SpectrogramParser
+from modules.audio.parser import SpectrogramParser, ZerothSpectrogramParser
 
 
+class ZerothSpectrogramDataset(Dataset, ZerothSpectrogramParser):
+    """_summary_
+
+    Args:
+        Dataset (_type_): _description_
+        SpectrogramParser (_type_): _description_
+    """
+    def __init__(
+            self,
+            dataset,
+            sos_id: int,  # identification of start of sequence token
+            eos_id: int,  # identification of end of sequence token
+            config,  # set of arguments
+            spec_augment: bool = False,  # flag indication whether to use spec-augmentation of not
+            
+    ) -> None:
+        super(ZerothSpectrogramDataset, self).__init__(
+            feature_extract_by=config.feature_extract_by, sample_rate=config.sample_rate,
+            n_mels=config.n_mels, frame_length=config.frame_length, frame_shift=config.frame_shift,
+            del_silence=config.del_silence, input_reverse=config.input_reverse,
+            normalize=config.normalize, freq_mask_para=config.freq_mask_para,
+            time_mask_num=config.time_mask_num, freq_mask_num=config.freq_mask_num,
+            sos_id=sos_id, eos_id=eos_id, transform_method=config.transform_method,
+            
+        )
+        self.augment_methods = [self.VANILLA] * len(self.dataset)
+        self.dataset = dataset
+        self.dataset_size = len(self.dataset)
+        self._augment(spec_augment)
+        self.shuffle()
+        
+        
+    def __getitem__(self, idx):
+        """ get feature vector & transcript """
+        
+        feature = self.parse_audio(self.dataset[idx], self.augment_methods[idx])
+        # sample rate check
+        if self.dataset[idx]['audio']['sampling_rate'] != self.sample_rate:
+            print(f"Sample rate mismatch: expected {self.sample_rate}, got {self.dataset[idx]['audio']['sampling_rate']}")
+        if feature is None:
+            return None
+
+        transcript, status = self.parse_transcript(self.dataset[idx])
+
+        if status == 'err':
+            print(self.dataset[idx]['text'])
+            print(idx)
+            
+        
+        return feature, transcript
+
+    def parse_transcript(self, dataset):
+        """ Parses transcript """
+        transcript = dataset['text']
+        tokens = transcript.split(' ')
+        transcript = list()
+
+        transcript.append(int(self.sos_id))
+        for token in tokens:
+            try:
+                transcript.append(int(token))
+                status='nor'
+            except:
+                print(tokens)
+                status='err'
+        transcript.append(int(self.eos_id))
+
+        return transcript, status
+
+    def _augment(self, spec_augment):
+        """ Spec Augmentation """
+        if spec_augment:
+            print("Applying Spec Augmentation...")
+
+            for idx in range(self.dataset_size):
+                self.augment_methods.append(self.SPEC_AUGMENT)
+                #self.audio_paths.append(self.audio_paths[idx])
+                #self.transcripts.append(self.transcripts[idx])
+
+    def shuffle(self):
+        """ Shuffle dataset """
+        #tmp = list(zip(self.audio_paths, self.transcripts, self.augment_methods))
+        random.shuffle(self.dataset)
+        
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def count(self):
+        return len(self.dataset)    
+        
+        pass
 class SpectrogramDataset(Dataset, SpectrogramParser):
     """
     Dataset for feature & transcript matching
