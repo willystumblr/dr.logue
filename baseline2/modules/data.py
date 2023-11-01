@@ -51,6 +51,7 @@ class ZerothSpectrogramDataset(Dataset, ZerothSpectrogramParser):
         self.augment_methods = [self.VANILLA] * len(self.dataset)
         self.dataset_size = len(self.dataset)
         self._augment(spec_augment)
+        self.sample_rate=config.sample_rate
         #self.shuffle()
         
         
