@@ -9,7 +9,7 @@ import argparse
 from glob import glob
 from datasets import load_dataset
 
-from modules.preprocess import preprocessing
+from modules.preprocess import preprocessing, zerothpreprocessing
 from modules.trainer import trainer
 from modules.utils import (
     get_optimizer,
@@ -162,14 +162,16 @@ if __name__ == '__main__':
         nova.paused(scope=locals())
 
     if config.mode == 'train':
-        label_path = os.path.join(DATASET_PATH, 'train', 'train_label')
-        preprocessing(label_path, os.getcwd())
         if config.pretrain:
             pretrain_dataset = load_dataset("Bingsu/zeroth-korean") #
             train_dataset, valid_dataset = zeroth_dataset_process(config, pretrain_dataset['train'], pretrain_dataset['test'], vocab)
-            
+            #label_path = os.path.join(DATASET_PATH, 'train', 'train_label')
+            zerothpreprocessing(train_dataset, os.getcwd())
+            zerothpreprocessing(valid_dataset, os.getcwd())
         else:
             config.dataset_path = os.path.join(DATASET_PATH, 'train', 'train_data')
+            label_path = os.path.join(DATASET_PATH, 'train', 'train_label')
+            preprocessing(label_path, os.getcwd())
             train_dataset, valid_dataset = split_dataset(config, os.path.join(os.getcwd(), 'transcripts.txt'), vocab)
         
         
