@@ -10,13 +10,14 @@ setup(
         'librosa >= 0.7.0',
         'numpy',
         'pandas',
-        'tqdm',
+        'tqdm==4.62.3',
         'matplotlib',
         'astropy',
         'sentencepiece',
         'torchaudio==0.6.0',
         'pydub',
-        'glob2'
+        'glob2',
+        'datasets'
     ],
 )
 
