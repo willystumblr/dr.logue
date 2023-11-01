@@ -164,7 +164,7 @@ if __name__ == '__main__':
     if config.mode == 'train':
         if config.pretrain:
             pretrain_dataset = load_dataset("Bingsu/zeroth-korean") #
-            train_dataset, valid_dataset = zeroth_dataset_process(pretrain_dataset['train'], pretrain_dataset['test'], vocab)
+            train_dataset, valid_dataset = zeroth_dataset_process(config, pretrain_dataset['train'], pretrain_dataset['test'], vocab)
         else:
             config.dataset_path = os.path.join(DATASET_PATH, 'train', 'train_data')
             train_dataset, valid_dataset = split_dataset(config, os.path.join(os.getcwd(), 'transcripts.txt'), vocab)
