@@ -47,11 +47,10 @@ class ZerothSpectrogramDataset(Dataset, ZerothSpectrogramParser):
             sos_id=sos_id, eos_id=eos_id, transform_method=config.transform_method,
             
         )
-        #self.augment_methods = [self.VANILLA] * len(self.dataset)
+        self.augment_methods = [self.VANILLA] * len(self.dataset)
         self.dataset = dataset
         self.dataset_size = len(self.dataset)
         self._augment(spec_augment)
-        self.augment_methods = [self.VANILLA] * len(self.dataset)
         self.shuffle()
         
         
