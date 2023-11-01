@@ -110,9 +110,22 @@ def generate_character_script(data_df, labels_dest):
             char_id_transcript = sentence_to_target(transcript, char2id)
             f.write(f'{audio_path}\t{transcript}\t{char_id_transcript}\n')
 
+def generate_and_store_character_script(dataset, labels_dest):
+    print('[INFO] create_script started..')
+    char2id, id2char = load_label(os.path.join(labels_dest, "labels.csv"))
+
+    #with open(os.path.join(labels_dest,"transcripts.txt"), "w+") as f:
+    for data in dataset:
+        char_id_transcript = sentence_to_target(data['text'], char2id)
+        dataset['transcript'] = char_id_transcript
 
 def preprocessing(transcripts_dest, labels_dest):
     transcript_df = pd.read_csv(transcripts_dest)
     generate_character_script(transcript_df, labels_dest)
+
+    print('[INFO] Preprocessing is Done')
+    
+def zerothpreprocessing(dataset, labels_dest):
+    generate_and_store_character_script(dataset, labels_dest)
 
     print('[INFO] Preprocessing is Done')
