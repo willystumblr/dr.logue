@@ -164,7 +164,7 @@ if __name__ == '__main__':
     
     if config.model_path:
         print("[INFO] Loading model checkpoint...")
-        nova.load()
+        nova.load(config.model_path)
 
     if config.mode == 'train':
         if config.pretrain:
