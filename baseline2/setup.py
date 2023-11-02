@@ -8,7 +8,7 @@ setup(
         # 'torch==1.7.0',
         # 'levenshtein',
         'librosa >= 0.7.0',
-        'numpy',
+        'numpy==1.21',
         'pandas',
         'tqdm==4.62.3',
         'matplotlib',
