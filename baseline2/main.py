@@ -46,7 +46,7 @@ def bind_model(config, model, optimizer=None):
         print('Model saved')
 
     def load(path, *args, **kwargs):
-        state = torch.load(os.path.join(path, 'model.pt'))
+        state = torch.load(os.path.join(config.model_path, 'model.pt'))
         model.load_state_dict(state['model'])
         if 'optimizer' in state and optimizer:
             optimizer.load_state_dict(state['optimizer'])
@@ -141,6 +141,7 @@ if __name__ == '__main__':
     args.add_argument('--spec_augment', type=bool, default=True)
     args.add_argument('--input_reverse', type=bool, default=False) 
     args.add_argument('--pretrain', type=bool, default=False)
+    args.add_argument('--model_path', type=str, default=None)
     
     config = args.parse_args()
     warnings.filterwarnings('ignore')
@@ -160,6 +161,10 @@ if __name__ == '__main__':
 
     if config.pause:
         nova.paused(scope=locals())
+    
+    if config.model_path:
+        print("[INFO] Loading model checkpoint...")
+        nova.load()
 
     if config.mode == 'train':
         if config.pretrain:
