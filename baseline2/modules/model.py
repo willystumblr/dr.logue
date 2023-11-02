@@ -281,29 +281,29 @@ class VGGExtractor(Conv2dExtractor):
         self.in_channels = in_channels
         self.out_channels = out_channels
         #print('VGG')
-        # self.conv = MaskCNN(
-        #     nn.Sequential(
-        #         nn.Conv2d(in_channels, out_channels[0], kernel_size=3, stride=1, padding=1, bias=False),
-        #         nn.BatchNorm2d(num_features=out_channels[0]),
-        #         self.activation,
-        #         nn.Conv2d(out_channels[0], out_channels[0], kernel_size=3, stride=1, padding=1, bias=False),
-        #         nn.BatchNorm2d(num_features=out_channels[0]),
-        #         self.activation,
-        #         nn.MaxPool2d(2, stride=2),
-        #         nn.Conv2d(out_channels[0], out_channels[1], kernel_size=3, stride=1, padding=1, bias=False),
-        #         nn.BatchNorm2d(num_features=out_channels[1]),
-        #         self.activation,
-        #         nn.Conv2d(out_channels[1], out_channels[1], kernel_size=3, stride=1, padding=1, bias=False),
-        #         nn.BatchNorm2d(num_features=out_channels[1]),
-        #         self.activation,
-        #         nn.MaxPool2d(2, stride=2),
-        #     )
-        # )
-        pretrained_vgg = models.vgg19(pretrained=True)
-        pretrained_vgg.features[0]=nn.Conv2d(in_channels, out_channels[0], kernel_size=3, stride=3, padding=1, bias=False)
-        pretrained_vgg.features[4]=nn.MaxPool2d(2, stride=2)
-        pretrained_vgg.features[9]=nn.MaxPool2d(2, stride=2)
-        self.conv = MaskCNN(pretrained_vgg.features[0:10])
+        self.conv = MaskCNN(
+            nn.Sequential(
+                nn.Conv2d(in_channels, out_channels[0], kernel_size=3, stride=1, padding=1, bias=False),
+                nn.BatchNorm2d(num_features=out_channels[0]),
+                self.activation,
+                nn.Conv2d(out_channels[0], out_channels[0], kernel_size=3, stride=1, padding=1, bias=False),
+                nn.BatchNorm2d(num_features=out_channels[0]),
+                self.activation,
+                nn.MaxPool2d(2, stride=2),
+                nn.Conv2d(out_channels[0], out_channels[1], kernel_size=3, stride=1, padding=1, bias=False),
+                nn.BatchNorm2d(num_features=out_channels[1]),
+                self.activation,
+                nn.Conv2d(out_channels[1], out_channels[1], kernel_size=3, stride=1, padding=1, bias=False),
+                nn.BatchNorm2d(num_features=out_channels[1]),
+                self.activation,
+                nn.MaxPool2d(2, stride=2),
+            )
+        )
+        # pretrained_vgg = models.vgg19(pretrained=True)
+        # pretrained_vgg.features[0]=nn.Conv2d(in_channels, out_channels[0], kernel_size=3, stride=3, padding=1, bias=False)
+        # pretrained_vgg.features[4]=nn.MaxPool2d(2, stride=2)
+        # pretrained_vgg.features[9]=nn.MaxPool2d(2, stride=2)
+        # self.conv = MaskCNN(pretrained_vgg.features[0:10])
         
         
     def forward(self, inputs: Tensor, input_lengths: Tensor) -> Tuple[Tensor, Tensor]:
@@ -472,7 +472,7 @@ class DeepSpeech2(EncoderModel):
     ):
         super(DeepSpeech2, self).__init__()
         self.device = device
-        self.conv = VGGExtractor(input_dim, activation=activation)
+        self.conv = DeepSpeech2Extractor(input_dim, activation=activation)
         self.rnn_layers = nn.ModuleList()
         rnn_output_size = rnn_hidden_dim << 1 if bidirectional else rnn_hidden_dim
 
