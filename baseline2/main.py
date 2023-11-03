@@ -46,7 +46,7 @@ def bind_model(config, model, optimizer=None):
         print('Model saved')
 
     def load(path, *args, **kwargs):
-        state = torch.load(os.path.join(config.model_path, 'model.pt'))
+        state = torch.load(os.path.join(path if not config.model_path else config.model_path, 'model.pt'))
         model.load_state_dict(state['model'])
         if 'optimizer' in state and optimizer:
             optimizer.load_state_dict(state['optimizer'])
