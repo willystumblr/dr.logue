@@ -11,10 +11,9 @@ from modules.data import load_audio, noise_filter
 from modules.model import DeepSpeech2
 
 
-def parse_audio(config, audio_path: str, del_silence: bool = False, audio_extension: str = 'pcm') -> Tensor:
+def parse_audio(audio_path: str, del_silence: bool = False, audio_extension: str = 'pcm') -> Tensor:
     signal = load_audio(audio_path, del_silence, extension=audio_extension)
-    if config.mode != 'train':
-        signal = noise_filter(signal)
+    signal = noise_filter(signal)
     feature = torchaudio.compliance.kaldi.fbank(
         waveform=Tensor(signal).unsqueeze(0),
         num_mel_bins=80,

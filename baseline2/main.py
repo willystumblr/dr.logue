@@ -36,7 +36,7 @@ import nova
 from nova import DATASET_PATH
 
 
-def bind_model(config, model, optimizer=None):
+def bind_model(model, optimizer=None):
     def save(path, *args, **kwargs):
         state = {
             'model': model.state_dict(),
@@ -53,13 +53,13 @@ def bind_model(config, model, optimizer=None):
         print('Model loaded')
 
     # 추론
-    def infer(config, path, **kwargs):
-        return inference(config, path, model)
+    def infer(path, **kwargs):
+        return inference(path, model)
 
     nova.bind(save=save, load=load, infer=infer)  # 'nova.bind' function must be called at the end.
 
 
-def inference(config, path, model, **kwargs):
+def inference(path, model, **kwargs):
     model.eval()
 
     results = []
@@ -67,7 +67,7 @@ def inference(config, path, model, **kwargs):
         results.append(
             {
                 'filename': i.split('/')[-1],
-                'text': single_infer(config, model, i)[0]
+                'text': single_infer(model, i)[0]
             }
         )
     return sorted(results, key=lambda x: x['filename'])
